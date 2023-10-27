@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/ghodss/yaml"
@@ -26,7 +24,7 @@ type LdapConfig struct {
 	StartTLS           bool       `json:"startTLS"`
 	InsecureNoSSL      bool       `json:"insecureNoSSL"`
 	InsecureSkipVerify bool       `json:"insecureSkipVerify"`
-	LdapSearch         LdapSearch `json:"ldap"`
+	LdapSearch         LdapSearch `json:"userSearch"`
 }
 
 type WebConfig struct {
@@ -39,17 +37,17 @@ type Config struct {
 	LdapConfig LdapConfig `json:"ldap"`
 }
 
-func ParseConfig() {
-	configPath := "./config/config.yaml"
+func ParseConfig() (Config, error) {
+	configPath := "./config.yaml"
 	content, err := os.ReadFile(configPath)
 	if err != nil {
-		log.Panic(err)
+		return Config{}, err
 	}
 	var conf Config
 	err = yaml.Unmarshal(content, &conf)
 	if err != nil {
-		log.Panic(err)
+		return Config{}, err
 	}
 
-	fmt.Println(conf)
+	return conf, nil
 }

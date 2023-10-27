@@ -9,7 +9,7 @@ ldap:
   bindDN: cn=admin,dc=example,dc=ovh
   bindPW: password
   # If 389 port is specified we try to use startTLS
-  startTLS: yes
+  startTLS: true
   # If startTLS fails do we use ldap without tls? THIS LEAKS PASSWORDS
   insecureNoSSL: false
   # If a custom certificate isn't provide, this option can be used to turn on
@@ -20,7 +20,7 @@ ldap:
   userSearch:
     # BaseDN to start the search from. It will translate to the query
     # "(&(objectClass=person)(uid=<username>))".
-    baseDN: ou=users,{{ ldap_basedn }}
+    baseDN: ou=users,dc=example,dc=com
       # Optional filter to apply when searching the directory.
     filter: "(objectClass=inetOrgPerson)"
 
