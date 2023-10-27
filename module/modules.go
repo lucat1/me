@@ -8,5 +8,5 @@ import (
 var ModuleMap = tengo.NewModuleMap()
 
 func init() {
-	ModuleMap.Add("ldap", ldap.Module{})
+	ModuleMap.AddBuiltinModule("ldap", ldap.Module)
 }
