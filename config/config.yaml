@@ -1,0 +1,44 @@
+web:
+  ip: 0.0.0.0
+  port: 8080
+
+ldap:
+  uri: ldap.example.com
+  # Default port to send request. 636 use ldaps
+  port: 636
+  bindDN: cn=admin,dc=example,dc=ovh
+  bindPW: password
+  # If 389 port is specified we try to use startTLS
+  startTLS: true
+  # If startTLS fails do we use ldap without tls? THIS LEAKS PASSWORDS
+  insecureNoSSL: false
+  # If a custom certificate isn't provide, this option can be used to turn on
+  # TLS certificate checks. As noted, it is insecure and shouldn't be used 
+  # outside of explorative phases.
+  insecureSkipVerify: false
+
+# The login script is used to very if a user in on the ldap server and is able
+# to authenticate
+login: path/to/check/script
+
+# Users can reset their password
+allow_password_reset: true
+
+# This is used if a user can't remember is password, so we send him an email
+# to reset it
+email:
+  server:
+    address: host:port
+    username: user
+    password: password
+    startTLS: true
+    insecureSkipVerify: false
+  sender:
+    address: root@teapot.ovh
+    template: path/to/template
+
+modules:
+  root: path/to/modules
+  enabled:
+    - password
+    - email
