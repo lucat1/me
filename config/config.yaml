@@ -1,5 +1,5 @@
 web:
-  http: 0.0.0.0
+  ip: 0.0.0.0
   port: 8080
 
 ldap:
@@ -17,22 +17,28 @@ ldap:
   # outside of explorative phases.
   insecureSkipVerify: false
 
-  userSearch:
-    # BaseDN to start the search from. It will translate to the query
-    # "(&(objectClass=person)(uid=<username>))".
-    baseDN: ou=users,dc=example,dc=com
-      # Optional filter to apply when searching the directory.
-    filter: "(objectClass=inetOrgPerson)"
+# The login script is used to very if a user in on the ldap server and is able
+# to authenticate
+login: path/to/check/script
 
-      # username attribute used for comparing user entries. This will be translated
-      # and combined with the other filter as "(<attr>=<username>)".
-    username: cn
-      # The following three fields are direct mappings of attributes on the user entry.
-      # String representation of the user.
-    idAttr: dn
-      # Required. Attribute to map to Email.
-    emailAttr: mail
-      # Maps to display name of users. No default value.
-    nameAttr: givenName
-      # Maps to preferred username of users. No default value.
-    preferredUsernameAttr: cn
+# Users can reset their password
+allow_password_reset: true
+
+# This is used if a user can't remember is password, so we send him an email
+# to reset it
+email:
+  server:
+    address: host:port
+    username: user
+    password: password
+    startTLS: true
+    insecureSkipVerify: false
+  sender:
+    address: root@teapot.ovh
+    template: path/to/template
+
+modules:
+  root: path/to/modules
+  enabled:
+    - password
+    - email
