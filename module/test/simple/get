@@ -1,0 +1,3 @@
+ldap := import("ldap")
+
+ldap.search(ldap.basedn(), "(objectClass=posixUser)")
