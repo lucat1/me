@@ -1,0 +1,7 @@
+{{ define "counter" }}
+<div id="counter">
+  Count: {{ .Count }}
+  <button hx-post="/inc" hx-target="#counter" hx-swap="outerHTML">+</button>
+  <button hx-post="/dec" hx-target="#counter" hx-swap="outerHTML">-</button>
+</div>
+{{ end }}
