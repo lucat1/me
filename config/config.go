@@ -21,7 +21,7 @@ type WebConfig struct {
 	Port string `json:"port"`
 }
 
-type Server struct {
+type MailServer struct {
 	Address            string `json:"address"`
 	Username           string `json:"username"`
 	Password           string `json:"password"`
@@ -29,14 +29,14 @@ type Server struct {
 	InsecureSkipVerify bool   `json:"insecureSkipVerify"`
 }
 
-type Sender struct {
+type MailSender struct {
 	Address  string `json:"address"`
 	Template string `json:"template"`
 }
 
 type Email struct {
-	Server Server `json:"server"`
-	Sender Sender `json:"sender"`
+	Server MailServer `json:"server"`
+	Sender MailSender `json:"sender"`
 }
 
 type Modules struct {
