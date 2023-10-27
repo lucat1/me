@@ -37,8 +37,7 @@ type Config struct {
 	LdapConfig LdapConfig `json:"ldap"`
 }
 
-func ParseConfig() (Config, error) {
-	configPath := "./config.yaml"
+func ParseConfig(configPath string) (Config, error) {
 	content, err := os.ReadFile(configPath)
 	if err != nil {
 		return Config{}, err

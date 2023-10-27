@@ -7,14 +7,14 @@ import (
 )
 
 func TestParseConfigWeb(t *testing.T) {
-	conf, err := ParseConfig()
+	conf, err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
 	assert.Equal(t, conf.WebConfig.Http, "0.0.0.0")
 	assert.Equal(t, conf.WebConfig.Port, "8080")
 }
 
 func TestParseConfigLdap(t *testing.T) {
-	conf, err := ParseConfig()
+	conf, err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
 	assert.Equal(t, conf.LdapConfig.Uri, "ldap.example.com")
 	assert.Equal(t, conf.LdapConfig.Port, 636)
@@ -26,7 +26,7 @@ func TestParseConfigLdap(t *testing.T) {
 }
 
 func TestParseConfigLdapSearch(t *testing.T) {
-	conf, err := ParseConfig()
+	conf, err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
 	assert.Equal(t, conf.LdapConfig.LdapSearch.BaseDN,
 		"ou=users,dc=example,dc=com")
