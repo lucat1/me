@@ -1,2 +1,8 @@
+github.com/d5/tengo/v2 v2.16.1 h1:/N6dqiGu9toqANInZEOQMM8I06icdZnmb+81DG/lZdw=
+github.com/d5/tengo/v2 v2.16.1/go.mod h1:XRGjEs5I9jYIKTxly6HCF8oiiilk5E/RYXOZ5b0DZC8=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/kataras/muxie v1.1.2 h1:adKtuNVFwT7TlGG2eIfhNYyRMK5CyjXw0F31HAv6POE=
 github.com/kataras/muxie v1.1.2/go.mod h1:xvAGGV93oksm/i9OBHyHqbiwUk1OenPd5CllnuO5lNU=
+gotest.tools/v3 v3.5.1 h1:EENdUnS3pdur5nybKYIh2Vfgc8IUNBjxDPSjtiJcOzU=
+gotest.tools/v3 v3.5.1/go.mod h1:isy3WKz7GK6uNw/sbHzfKBLvlvXwUyV06n6brMxxopU=

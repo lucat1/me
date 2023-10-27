@@ -2,4 +2,9 @@ module github.com/lucat1/me
 
 go 1.21.3
 
-require github.com/kataras/muxie v1.1.2 // indirect
+require (
+	github.com/d5/tengo/v2 v2.16.1 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/kataras/muxie v1.1.2 // indirect
+	gotest.tools/v3 v3.5.1 // indirect
+)
