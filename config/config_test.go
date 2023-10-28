@@ -6,57 +6,68 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func TestParseConfigWrongPath(t *testing.T) {
+	err := ParseConfig("/scjwei")
+	assert.Assert(t, err != nil)
+}
+
 func TestParseConfigWeb(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.WebConfig.Ip, "0.0.0.0")
-	assert.Equal(t, conf.WebConfig.Port, "8080")
+	Config := Get()
+	assert.Equal(t, Config.WebConfig.Ip, "0.0.0.0")
+	assert.Equal(t, Config.WebConfig.Port, "8080")
 }
 
 func TestParseConfigLdap(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.LdapConfig.Uri, "ldap.example.com")
-	assert.Equal(t, conf.LdapConfig.Port, 636)
-	assert.Equal(t, conf.LdapConfig.BindDN, "cn=admin,dc=example,dc=ovh")
-	assert.Equal(t, conf.LdapConfig.BindPW, "password")
-	assert.Equal(t, conf.LdapConfig.StartTLS, true)
-	assert.Equal(t, conf.LdapConfig.InsecureNoSSL, false)
-	assert.Equal(t, conf.LdapConfig.InsecureSkipVerify, false)
+	Config := Get()
+	assert.Equal(t, Config.LdapConfig.Address, "ldaps://ldap.example.com:636")
+	assert.Equal(t, Config.LdapConfig.BindDN, "cn=admin,dc=example,dc=ovh")
+	assert.Equal(t, Config.LdapConfig.BindPW, "password")
+	assert.Equal(t, Config.LdapConfig.StartTLS, true)
+	assert.Equal(t, Config.LdapConfig.InsecureNoSSL, false)
+	assert.Equal(t, Config.LdapConfig.InsecureSkipVerify, false)
 }
 
 func TestParseConfigLogin(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.LoginScript, "path/to/check/script")
+	Config := Get()
+	assert.Equal(t, Config.LoginScript, "path/to/check/script")
 }
 
 func TestParseConfigAllowPasswordReset(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.AllowPasswordReset, true)
+	Config := Get()
+	assert.Equal(t, Config.AllowPasswordReset, true)
 }
 
 func TestParseConfigEmailServer(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.Email.Server.Address, "host:port")
-	assert.Equal(t, conf.Email.Server.Username, "user")
-	assert.Equal(t, conf.Email.Server.Password, "password")
-	assert.Equal(t, conf.Email.Server.StartTLS, true)
-	assert.Equal(t, conf.Email.Server.InsecureSkipVerify, false)
+	Config := Get()
+	assert.Equal(t, Config.Email.Server.Address, "host:port")
+	assert.Equal(t, Config.Email.Server.Username, "user")
+	assert.Equal(t, Config.Email.Server.Password, "password")
+	assert.Equal(t, Config.Email.Server.StartTLS, true)
+	assert.Equal(t, Config.Email.Server.InsecureSkipVerify, false)
 }
 
 func TestParseConfigEmailSender(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.Email.Sender.Address, "root@teapot.ovh")
-	assert.Equal(t, conf.Email.Sender.Template, "path/to/template")
+	Config := Get()
+	assert.Equal(t, Config.Email.Sender.Address, "root@teapot.ovh")
+	assert.Equal(t, Config.Email.Sender.Template, "path/to/template")
 }
 
 func TestParseConfigModules(t *testing.T) {
-	conf, err := ParseConfig("./config.yaml")
+	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	assert.Equal(t, conf.Modules.Root, "path/to/modules")
-	assert.DeepEqual(t, conf.Modules.Enabled, []string{"password", "email"})
+	Config := Get()
+	assert.Equal(t, Config.Modules.Root, "path/to/modules")
+	assert.DeepEqual(t, Config.Modules.Enabled, []string{"password", "email"})
 }

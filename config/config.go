@@ -7,8 +7,7 @@ import (
 )
 
 type LdapConfig struct {
-	Uri                string `json:"uri"`
-	Port               int    `json:"port"`
+	Address            string `json:"address"`
 	BindDN             string `json:"bindDN"`
 	BindPW             string `json:"bindPW"`
 	StartTLS           bool   `json:"startTLS"`
@@ -53,16 +52,20 @@ type Config struct {
 	Modules            Modules    `json:"modules"`
 }
 
-func ParseConfig(configPath string) (Config, error) {
+var config Config
+
+func ParseConfig(configPath string) error {
 	content, err := os.ReadFile(configPath)
 	if err != nil {
-		return Config{}, err
+		return err
 	}
-	var conf Config
-	err = yaml.Unmarshal(content, &conf)
+	err = yaml.Unmarshal(content, &config)
 	if err != nil {
-		return Config{}, err
+		return err
 	}
+	return nil
+}
 
-	return conf, nil
+func Get() *Config {
+	return &config
 }
