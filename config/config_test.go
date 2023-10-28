@@ -11,16 +11,10 @@ func TestParseConfigWrongPath(t *testing.T) {
 	assert.Assert(t, err != nil)
 }
 
-func TestGetWithoutParse(t *testing.T) {
-	_, err := Get()
-	assert.Assert(t, err != nil)
-}
-
 func TestParseConfigWeb(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.WebConfig.Ip, "0.0.0.0")
 	assert.Equal(t, Config.WebConfig.Port, "8080")
 }
@@ -28,8 +22,7 @@ func TestParseConfigWeb(t *testing.T) {
 func TestParseConfigLdap(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.LdapConfig.Address, "ldaps://ldap.example.com:636")
 	assert.Equal(t, Config.LdapConfig.BindDN, "cn=admin,dc=example,dc=ovh")
 	assert.Equal(t, Config.LdapConfig.BindPW, "password")
@@ -40,25 +33,22 @@ func TestParseConfigLdap(t *testing.T) {
 
 func TestParseConfigLogin(t *testing.T) {
 	err := ParseConfig("./config.yaml")
-	Config, err := Get()
 	assert.NilError(t, err)
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.LoginScript, "path/to/check/script")
 }
 
 func TestParseConfigAllowPasswordReset(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.AllowPasswordReset, true)
 }
 
 func TestParseConfigEmailServer(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.Email.Server.Address, "host:port")
 	assert.Equal(t, Config.Email.Server.Username, "user")
 	assert.Equal(t, Config.Email.Server.Password, "password")
@@ -69,8 +59,7 @@ func TestParseConfigEmailServer(t *testing.T) {
 func TestParseConfigEmailSender(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.Email.Sender.Address, "root@teapot.ovh")
 	assert.Equal(t, Config.Email.Sender.Template, "path/to/template")
 }
@@ -78,8 +67,7 @@ func TestParseConfigEmailSender(t *testing.T) {
 func TestParseConfigModules(t *testing.T) {
 	err := ParseConfig("./config.yaml")
 	assert.NilError(t, err)
-	Config, err := Get()
-	assert.NilError(t, err)
+	Config := Get()
 	assert.Equal(t, Config.Modules.Root, "path/to/modules")
 	assert.DeepEqual(t, Config.Modules.Enabled, []string{"password", "email"})
 }
