@@ -1,0 +1,9 @@
+{
+  "name": "simple",
+  "handlers": {
+    "/": "get"
+  },
+  "templates": [
+    "index.html"
+  ]
+}
