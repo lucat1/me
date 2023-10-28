@@ -52,7 +52,7 @@ type Config struct {
 	Modules            Modules    `json:"modules"`
 }
 
-var config *Config
+var config Config
 
 func ParseConfig(configPath string) error {
 	content, err := os.ReadFile(configPath)
@@ -67,5 +67,5 @@ func ParseConfig(configPath string) error {
 }
 
 func Get() *Config {
-	return config
+	return &config
 }
