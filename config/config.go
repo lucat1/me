@@ -44,7 +44,7 @@ type Modules struct {
 	Enabled []string `json:"enabled"`
 }
 
-type sConfig struct {
+type Config struct {
 	WebConfig          WebConfig  `json:"web"`
 	LdapConfig         LdapConfig `json:"ldap"`
 	LoginScript        string     `json:"login"`
@@ -53,17 +53,21 @@ type sConfig struct {
 	Modules            Modules    `json:"modules"`
 }
 
-var Config sConfig
+var config Config
 
 func ParseConfig(configPath string) error {
 	content, err := os.ReadFile(configPath)
 	if err != nil {
 		return err
 	}
-	err = yaml.Unmarshal(content, &Config)
+	err = yaml.Unmarshal(content, &config)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func Get() Config {
+	return config
 }
