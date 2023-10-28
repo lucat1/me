@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 
 	"github.com/ghodss/yaml"
@@ -53,6 +54,7 @@ type Config struct {
 }
 
 var config Config
+var isParsed bool
 
 func ParseConfig(configPath string) error {
 	content, err := os.ReadFile(configPath)
@@ -64,9 +66,13 @@ func ParseConfig(configPath string) error {
 		return err
 	}
 
+	isParsed = true
 	return nil
 }
 
-func Get() Config {
-	return config
+func Get() (Config, error) {
+	if !isParsed {
+		return Config{}, errors.New("No config is parsed yet")
+	}
+	return config, nil
 }
