@@ -3,9 +3,7 @@ web:
   port: 8080
 
 ldap:
-  uri: ldap.example.com
-  # Default port to send request. 636 use ldaps
-  port: 636
+  address: ldaps://ldap.example.com:636
   bindDN: cn=admin,dc=example,dc=ovh
   bindPW: password
   # If 389 port is specified we try to use startTLS

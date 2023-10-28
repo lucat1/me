@@ -7,8 +7,7 @@ import (
 )
 
 type LdapConfig struct {
-	Uri                string `json:"uri"`
-	Port               int    `json:"port"`
+	Address            string `json:"address"`
 	BindDN             string `json:"bindDN"`
 	BindPW             string `json:"bindPW"`
 	StartTLS           bool   `json:"startTLS"`
