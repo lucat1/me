@@ -61,9 +61,8 @@ func Start() (*ldap.Conn, error) {
 		}
 	case "ldaps":
 		{
-			slog.With("scheme", ldapUrl.Scheme).Debug("Trying to use ldaps://")
-			slog.With("address", conf.LdapConfig.Address).
-				Debug("Trying to connet to ldap server...")
+			slog.With("scheme", ldapUrl.Scheme, "address", conf.LdapConfig.Address).
+				Debug("Starting ldap connection")
 
 			c, err = ldap.DialURL(conf.LdapConfig.Address,
 				ldap.DialWithTLSConfig(&tlsConfig))
@@ -73,10 +72,7 @@ func Start() (*ldap.Conn, error) {
 		}
 	default:
 		{
-			err := errors.New("Can't parse a valid scheme in ldap Address: " +
-				ldapUrl.Scheme)
-			slog.With("error", err, "scheme", ldapUrl.Scheme)
-			return nil, err
+			return nil, errors.New("Invalid scheme in server URI: " + ldapUrl.Scheme)
 		}
 	}
 
