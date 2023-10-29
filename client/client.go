@@ -38,11 +38,18 @@ func Start() (*ldap.Conn, error) {
 					Debug("Trying to use startTLS")
 				err = c.StartTLS(&tlsConfig)
 				if err != nil {
-					return nil, err
+					slog.With("err", err).Debug("StartTLS has failed")
+				}
+
+				if !conf.LdapConfig.InsecureNoSSL {
+					slog.With("InsecureNoSSL", conf.LdapConfig.InsecureNoSSL).
+						Debug("Using ldap without tls. The connection will be INSECURE")
+				} else {
+					return nil, errors.New("Can't establish TLS connection and InsecureSkipVerify is false. The connection can't be secure. Aborting")
 				}
 			} else {
 				slog.With("useStartTLS", conf.LdapConfig.StartTLS).
-					Debug("The connection will be INSECURE")
+					Debug("Using ldap without tls. The connection will be INSECURE")
 				slog.With("address", conf.LdapConfig.Address).
 					Debug("Trying to connet to ldap server...")
 
