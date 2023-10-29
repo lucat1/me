@@ -25,10 +25,9 @@ func Start() (*ldap.Conn, error) {
 	switch ldapUrl.Scheme {
 	case "ldap":
 		{
-			slog.With("scheme", ldapUrl.Scheme)
 			if conf.LdapConfig.StartTLS {
-				slog.With("address", conf.LdapConfig.Address).
-					Debug("Trying to connet to ldap server...")
+				slog.With("scheme", ldapUrl.Scheme, "address", conf.LdapConfig.Address).
+					Debug("Trying to connet to ldap server")
 				c, err = ldap.DialURL(conf.LdapConfig.Address)
 				if err != nil {
 					return nil, err
@@ -45,7 +44,7 @@ func Start() (*ldap.Conn, error) {
 					slog.With("InsecureNoSSL", conf.LdapConfig.InsecureNoSSL).
 						Debug("Using ldap without tls. The connection will be INSECURE")
 				} else {
-					return nil, errors.New("Can't establish TLS connection and InsecureSkipVerify is false. The connection can't be secure. Aborting")
+					return nil, errors.New("Can't establish TLS connection and InsecureSkipVerify is false")
 				}
 			} else {
 				slog.With("useStartTLS", conf.LdapConfig.StartTLS).
