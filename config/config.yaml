@@ -40,3 +40,6 @@ modules:
   enabled:
     - password
     - email
+
+# The options are debug, info, warn and error
+log_level: debug
