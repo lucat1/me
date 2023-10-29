@@ -3,10 +3,12 @@ package main
 import (
 	"bytes"
 	"html/template"
+	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/kataras/muxie"
+	"github.com/lucat1/me/config"
 )
 
 var (
@@ -15,6 +17,27 @@ var (
 )
 
 func main() {
+	config.ParseConfig("./config/config.yaml")
+	conf := config.Get()
+
+	//Set log level
+	var logLevel slog.Level
+
+	switch conf.LogLevel {
+	case "debug":
+		logLevel = slog.LevelDebug
+	case "info":
+		logLevel = slog.LevelInfo
+	case "warn":
+		logLevel = slog.LevelWarn
+	case "error":
+		logLevel = slog.LevelError
+	default:
+		logLevel = slog.LevelWarn
+	}
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: logLevel})
+	slog.SetDefault(slog.New(handler))
+
 	fs := os.DirFS(".")
 	var err error
 	templates, err = template.ParseFS(fs, "templates/*.html")

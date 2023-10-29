@@ -50,6 +50,7 @@ type Config struct {
 	AllowPasswordReset bool       `json:"allow_password_reset"`
 	Email              Email      `json:"email"`
 	Modules            Modules    `json:"modules"`
+	LogLevel           string     `json:"log_level"`
 }
 
 var config Config
