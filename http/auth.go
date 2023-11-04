@@ -2,20 +2,72 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/lucat1/me/config"
 )
 
-const AUTH_CONTEXT_KEY = "auth"
+const (
+	AUTH_CONTEXT_KEY = "auth"
+	AUTH_COOKIE_NAME = "token"
+)
 
 type User struct {
 	DN string `json:"string"`
 }
 
+type Claims struct {
+	User
+	jwt.RegisteredClaims
+}
+
+func Authenticate(w http.ResponseWriter, user User) (err error) {
+	authConfig := config.Get().Auth
+	claims := Claims{User: user}
+	expiry := time.Now().Add(time.Duration(authConfig.Duration) * time.Hour)
+	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(expiry)
+
+	token := jwt.NewWithClaims(&jwt.SigningMethodEd25519{}, claims)
+	tokenString, err := token.SignedString(authConfig.Secret)
+	if err != nil {
+		err = fmt.Errorf("Could not sign JWT: %v", err)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    AUTH_COOKIE_NAME,
+		Value:   tokenString,
+		Expires: expiry,
+	})
+	return
+}
+
 func AuthMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "user", "fideloper")
-		h.ServeHTTP(w, r.WithContext(ctx))
+		cookie, err := r.Cookie(AUTH_COOKIE_NAME)
+		if err != nil {
+			slog.With("err", err, "missing", err == http.ErrNoCookie).Debug("Could not get auth cookie")
+			// TODO: We may consider returning a 400 for requests which give an error different
+			// from ErrNoCookie, as done here: https://www.sohamkamani.com/golang/jwt-authentication/
+			h.ServeHTTP(w, r)
+			return
+		}
+
+		claims := Claims{}
+		tkn, err := jwt.ParseWithClaims(cookie.Value, &claims, func(token *jwt.Token) (any, error) {
+			return config.Get().Auth.Secret, nil
+		})
+		if err != nil || !tkn.Valid {
+			slog.With("err", err, "valid", tkn.Valid).Debug("Invalid token")
+		} else {
+			ctx := context.WithValue(r.Context(), AUTH_CONTEXT_KEY, claims.User)
+			r = r.WithContext(ctx)
+		}
+		h.ServeHTTP(w, r)
 	})
 }
 

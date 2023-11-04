@@ -43,6 +43,11 @@ type Modules struct {
 	Enabled []string `json:"enabled"`
 }
 
+type Auth struct {
+	Secret   string `json:"secret"`
+	Duration uint64 `json:"duration"`
+}
+
 type Config struct {
 	WebConfig          WebConfig  `json:"web"`
 	LdapConfig         LdapConfig `json:"ldap"`
@@ -50,6 +55,7 @@ type Config struct {
 	AllowPasswordReset bool       `json:"allow_password_reset"`
 	Email              Email      `json:"email"`
 	Modules            Modules    `json:"modules"`
+	Auth               Auth       `json:"auth"`
 	LogLevel           string     `json:"log_level"`
 }
 

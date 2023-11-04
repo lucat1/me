@@ -41,5 +41,11 @@ modules:
     - password
     - email
 
+auth:
+  # The secret key used to sign JWTs
+  secret: "supersecretkey"
+  # JWT duration in minutes (60 * 48)
+  duration: 2880
+
 # The options are debug, info, warn and error
 log_level: debug
