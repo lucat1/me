@@ -1,0 +1,23 @@
+{{ define "me.login" }}
+<h1 class="text-2xl">Login</h1>
+
+<div class="flex flex-col m-8">
+
+  <div class="flex flex-col my-4">
+    <label for="username" class="my-2 text-md font-medium">Username</label>
+    <input id="username" class="text-lg" />
+  </div>
+
+  <div class="flex flex-col max-w my-4">
+    <label for="username" class="my-2 text-md font-medium">Password</label>
+    <input id="username" class="text-lg" />
+  </div>
+
+  <div class="flex flex-row my-4 justify-between items-center">
+    <a href="/reset">Forgot password?</a>
+    <button class="b-none px-4 py-2 bg-blue-500 text-slate-50">Log in</button>
+  </div>
+
+</div>
+
+{{ end }}

@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -10,32 +11,48 @@ import (
 	"github.com/lucat1/me/templates"
 )
 
-type PageData[T any] struct {
-	Data      T
+type PageDataData struct {
+	Title string
+	Body  template.HTML
+}
+
+type PageData struct {
+	Data      PageDataData
 	RequestID uuid.UUID
 	Timestamp time.Time
 }
 
-func RenderPage[T any](w http.ResponseWriter, r *http.Request, name string, data T) (err error) {
+const ROOT_TEMPLATE = "root"
+
+func RenderPage[T any](w http.ResponseWriter, r *http.Request, name, title string, data T) (err error) {
+	body, err := RenderBlock[T](name, data)
+	if err != nil {
+		err = fmt.Errorf("Error while rendering page (non root): %v", err)
+		return
+	}
+
 	templates := templates.Get()
-	pageData := PageData[T]{
-		Data:      data,
+	pageData := PageData{
+		Data: PageDataData{
+			Title: title,
+			Body:  template.HTML(body),
+		},
 		RequestID: GetRequestId(r),
 		Timestamp: time.Now(),
 	}
-	err = templates.ExecuteTemplate(w, name, pageData)
+	err = templates.ExecuteTemplate(w, ROOT_TEMPLATE, pageData)
 	if err != nil {
-		err = fmt.Errorf("Error while rendering page template: %v", err)
+		err = fmt.Errorf("Error while rendering page root: %v", err)
 	}
 	return
 }
 
-func RenderBlock[T any](name string, data PageData[T]) (block []byte, err error) {
+func RenderBlock[T any](name string, data T) (block []byte, err error) {
 	templates := templates.Get()
 	buffer := bytes.NewBuffer([]byte{})
 	err = templates.ExecuteTemplate(buffer, name, data)
 	if err != nil {
-		err = fmt.Errorf("Error while rendering page template: %v", err)
+		err = fmt.Errorf("Error while rendering block: %v", err)
 	}
 	block = buffer.Bytes()
 	return

@@ -1,14 +1,31 @@
 {{ define "root" }}
 <!DOCTYPE html>
-<html>
+<html class="dark">
 
 <head>
-  <title>me</title>
+  <title>{{ .Data.Title }} - me</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/normalize.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
   <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 </head>
 
-<body>
-  {{ .Data }}
+<body class="m-0">
+  <header class="absolute top-0 left-0 right-0">
+    <main class="m-auto py-3 lg:w-3xl text-xl">
+      {{ template "logo" }}
+    </main>
+  </header>
+  <main class="absolute top-14 left-0 right-0 bottom-10">
+    <main class="m-auto lg:w-3xl">
+      {{ .Data.Body }}
+    </main>
+  </main>
+  <footer class="absolute bottom-0 left-0 right-0">
+    <main class="m-auto py-3 lg:w-3xl flex justify-between items-center text-xs">
+      <span>{{ .RequestID }}</span>
+      <span>{{ .Timestamp.Format "Jan 02, 2006 15:04:05" }}</span>
+    </main>
+  </footer>
 </body>
 
 </html>
