@@ -17,7 +17,9 @@ ldap:
 
 # The login script is used to very if a user in on the ldap server and is able
 # to authenticate
-login: path/to/check/script
+builtin:
+  templates: templates # Path to templates folder
+  login: login # Path to the login script
 
 # Users can reset their password
 allow_password_reset: true

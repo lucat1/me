@@ -17,7 +17,7 @@ type LdapConfig struct {
 
 type WebConfig struct {
 	Ip   string `json:"ip"`
-	Port string `json:"port"`
+	Port uint16 `json:"port"`
 }
 
 type MailServer struct {
@@ -48,15 +48,20 @@ type Auth struct {
 	Duration uint64 `json:"duration"`
 }
 
+type BuiltinConfig struct {
+	TemplatesDir string `json:"templates"`
+	LoginScript  string `json:"login"`
+}
+
 type Config struct {
-	WebConfig          WebConfig  `json:"web"`
-	LdapConfig         LdapConfig `json:"ldap"`
-	LoginScript        string     `json:"login"`
-	AllowPasswordReset bool       `json:"allow_password_reset"`
-	Email              Email      `json:"email"`
-	Modules            Modules    `json:"modules"`
-	Auth               Auth       `json:"auth"`
-	LogLevel           string     `json:"log_level"`
+	WebConfig          WebConfig     `json:"web"`
+	LdapConfig         LdapConfig    `json:"ldap"`
+	Builtin            BuiltinConfig `json:"builtin"`
+	AllowPasswordReset bool          `json:"allow_password_reset"`
+	Email              Email         `json:"email"`
+	Modules            Modules       `json:"modules"`
+	Auth               Auth          `json:"auth"`
+	LogLevel           string        `json:"log_level"`
 }
 
 var config Config
