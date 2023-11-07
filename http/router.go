@@ -5,8 +5,9 @@ import (
 )
 
 const (
-	INDEX_ROUTE = "/"
-	LOGIN_ROUTE = "/login"
+	INDEX_ROUTE    = "/"
+	LOGIN_ROUTE    = "/login"
+	LOGIN_DO_ROUTE = "/login/do"
 )
 
 func Router() *muxie.Mux {
@@ -14,5 +15,6 @@ func Router() *muxie.Mux {
 	router.Use(IdMiddleware, LogMiddleware, AuthMiddleware)
 	router.HandleFunc(INDEX_ROUTE, Index)
 	router.HandleFunc(LOGIN_ROUTE, Login)
+	router.HandleFunc(LOGIN_DO_ROUTE, LoginDo)
 	return router
 }
