@@ -3,6 +3,7 @@ package client
 import (
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/url"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/lucat1/me/config"
 )
 
-func Start() (*ldap.Conn, error) {
+func Start(slog *slog.Logger) (*ldap.Conn, error) {
 	conf := config.Get()
 
 	ldapUrl, err := url.Parse(conf.LdapConfig.Address)
@@ -75,10 +76,21 @@ func Start() (*ldap.Conn, error) {
 		}
 	}
 
-	// This should never happend
-	if c == nil {
-		return nil, errors.New("Something went wrong, the connection to the ldap server is nil")
+	return c, nil
+}
+
+// StartRoot opens an ldap client binded as the root account (bind_dn and bind_pw)
+func StartRoot(slog *slog.Logger) (c *ldap.Conn, err error) {
+	c, err = Start(slog)
+	if err != nil {
+		return
 	}
 
-	return c, nil
+	conf := config.Get().LdapConfig
+	slog.With("dn", conf.BindDN).Debug("Binding as LDAP user")
+	err = c.Bind(conf.BindDN, conf.BindPW)
+	if err != nil {
+		err = fmt.Errorf("Could not bind as administrator: %v", err)
+	}
+	return
 }

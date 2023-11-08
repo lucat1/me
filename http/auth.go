@@ -30,7 +30,7 @@ func Authenticate(w http.ResponseWriter, user User) (err error) {
 	expiry := time.Now().Add(time.Duration(authConfig.Duration) * time.Hour)
 	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(expiry)
 
-	token := jwt.NewWithClaims(&jwt.SigningMethodEd25519{}, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(authConfig.Secret)
 	if err != nil {
 		err = fmt.Errorf("Could not sign JWT: %v", err)

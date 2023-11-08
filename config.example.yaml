@@ -3,9 +3,9 @@ web:
   port: 8080
 
 ldap:
-  address: ldaps://ldap.example.com:636
-  bindDN: cn=admin,dc=example,dc=ovh
-  bindPW: password
+  address: "ldaps://ldap.example.com:636"
+  bindDN: "cn=admin,dc=example,dc=ovh"
+  bindPW: "password"
   # If 389 port is specified we try to use startTLS
   startTLS: true
   # If startTLS fails do we use ldap without tls? THIS LEAKS PASSWORDS
@@ -18,24 +18,24 @@ ldap:
 # The login script is used to very if a user in on the ldap server and is able
 # to authenticate
 builtin:
-  templates: templates # Path to templates folder
-  login: login # Path to the login script
+  templates: "templates" # Path to templates folder
+  login: "login" # Path to the login script
 
 # Users can reset their password
-allow_password_reset: true
+allowPasswordReset: true
 
 # This is used if a user can't remember is password, so we send him an email
 # to reset it
 email:
   server:
-    address: host:port
-    username: user
-    password: password
+    address: "host:port"
+    username: "user"
+    password: "password"
     startTLS: true
     insecureSkipVerify: false
   sender:
-    address: root@teapot.ovh
-    template: path/to/template
+    address: "root@teapot.ovh"
+    template: "path/to/template"
 
 modules:
   root: path/to/modules
@@ -49,5 +49,8 @@ auth:
   # JWT duration in minutes (60 * 48)
   duration: 2880
 
+  baseDn: "ou=users,dc=example,dc=ovh"
+  filter: "(&(objectClass=posixAccount)(cn={username}))"
+
 # The options are debug, info, warn and error
-log_level: debug
+logLevel: debug

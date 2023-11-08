@@ -8,10 +8,20 @@ import (
 	"github.com/google/uuid"
 )
 
+type ContextKey string
+
 const (
-	REQUEST_ID_CONTEXT_KEY = "requestId"
-	LOGGER_CONTEXT_KEY     = "logger"
+	REQUEST_ID_CONTEXT_KEY ContextKey = "requestId"
+	LOGGER_CONTEXT_KEY     ContextKey = "logger"
+	ERROR_CONTEXT_KEY      ContextKey = "error"
 )
+
+type ErrorPageData struct {
+	Status  int
+	Partial bool
+	Error   error
+	Message string
+}
 
 func IdMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -62,5 +72,42 @@ func RateLimitMiddleware(h http.Handler) http.Handler {
 		// }
 
 		h.ServeHTTP(w, r)
+	})
+}
+
+func Error(w http.ResponseWriter, r *http.Request, status int, partial bool, err error, message string) {
+	res, ok := r.Context().Value(ERROR_CONTEXT_KEY).(*ErrorPageData)
+	if !ok {
+		panic("Could not get request error value from context")
+	}
+
+	w.WriteHeader(status)
+	res.Status = status
+	res.Partial = partial
+	res.Error = err
+	res.Message = message
+}
+
+func ErrorMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		err := ErrorPageData{
+			Status: http.StatusOK,
+		}
+		ctx := context.WithValue(r.Context(), ERROR_CONTEXT_KEY, &err)
+		h.ServeHTTP(w, r.WithContext(ctx))
+		if err.Status != http.StatusOK {
+			logger := GetLogger(r)
+			logger.With("err", err.Error).Error(err.Message)
+
+			var renderErr error
+			if err.Partial {
+				renderErr = RenderBlockPage[ErrorPageData](w, r, "error", err)
+			} else {
+				renderErr = RenderPage[ErrorPageData](w, r, "error", "Error", err)
+			}
+			if renderErr != nil {
+				logger.With("err", renderErr).Error("Could not render page")
+			}
+		}
 	})
 }

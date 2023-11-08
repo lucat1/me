@@ -47,12 +47,20 @@ func RenderPage[T any](w http.ResponseWriter, r *http.Request, name, title strin
 	return
 }
 
+func RenderBlockPage[T any](w http.ResponseWriter, r *http.Request, name string, data T) (err error) {
+	err = templates.Get().ExecuteTemplate(w, name, data)
+	if err != nil {
+		err = fmt.Errorf("Error while rendering block page %s: %v", name, err)
+	}
+	return
+}
+
 func RenderBlock[T any](name string, data T) (block []byte, err error) {
 	templates := templates.Get()
 	buffer := bytes.NewBuffer([]byte{})
 	err = templates.ExecuteTemplate(buffer, name, data)
 	if err != nil {
-		err = fmt.Errorf("Error while rendering block: %v", err)
+		err = fmt.Errorf("Error while rendering block %s: %v", name, err)
 	}
 	block = buffer.Bytes()
 	return

@@ -3,6 +3,15 @@ package http
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
+
+	"github.com/go-ldap/ldap/v3"
+	"github.com/lucat1/me/client"
+	"github.com/lucat1/me/config"
+)
+
+const (
+	HTMX_REDIRECT = "HX-Redirect"
 )
 
 type LoginFormData struct {
@@ -36,27 +45,84 @@ func LoginDo(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&loginData)
 	if err != nil {
-		// TODO: display errors
-		logger.With("err", err).Warn("Invalid login data")
+		Error(w, r, http.StatusBadRequest, true, nil, "Invalid login data")
 		return
 	}
 
-	logger.With("username", loginData.Username).Info("Login attempt")
+	logger = logger.With("username", loginData.Username)
+	logger.Info("Login attempt")
 
-	// Basic data to persist form values
-	data := LoginFormData{
+	// Basic returnData to persist form values
+	returnData := LoginFormData{
 		Username: loginData.Username,
 		Password: loginData.Password,
 	}
 
-	// TODO: call the login script instead of aribtrarely setting the error
-	data.Error = "Not implemented yet"
-	partial, err := RenderBlock[LoginFormData]("login.form", data)
-	if err != nil {
-		logger.With("err", err).Error("Could not render page")
+	if loginData.Username == "" {
+		returnData.UsernameError = "The username cannot be empty"
+	} else if loginData.Password == "" {
+		returnData.PasswordError = "The password cannot be empty"
+	} else {
+		authCfg := config.Get().Auth
+		filter := strings.ReplaceAll(authCfg.Filter, "{username}", loginData.Username)
+		c, err := client.StartRoot(logger)
+		if err != nil {
+			Error(w, r, http.StatusInternalServerError, true, err, "Could not start the LDAP client")
+			return
+		}
+		logger.With("base", authCfg.BaseDN, "filter", filter).Debug("Searching for user")
+		results, err := c.Search(ldap.NewSearchRequest(
+			authCfg.BaseDN,
+			ldap.ScopeWholeSubtree,
+			ldap.NeverDerefAliases,
+			0,
+			0,
+			false,
+			filter,
+			[]string{"dn"},
+			nil,
+		))
+		if err != nil {
+			Error(w, r, http.StatusInternalServerError, true, err, "LDAP Search Error")
+			return
+		}
+		if err := c.Close(); err != nil {
+			Error(w, r, http.StatusInternalServerError, true, err, "LDAP Close Error")
+			return
+		}
+
+		for _, entry := range results.Entries {
+			logger.With("entry", entry.DN).Info("Found user")
+		}
+		if len(results.Entries) < 1 || len(results.Entries) > 1 {
+			returnData.Error = "Invalid credentials"
+			return
+		} else {
+			userDN := results.Entries[0].DN
+
+			c, err := client.Start(logger)
+			if err != nil {
+				Error(w, r, http.StatusInternalServerError, true, err, "Could not start the LDAP client")
+				return
+			}
+			if err := c.Bind(userDN, loginData.Password); err != nil {
+				returnData.Error = "Invalid credentials"
+			} else {
+				logger.With("username", loginData.Username, "dn", userDN).Info("Logged in")
+				if err := Authenticate(w, User{DN: userDN}); err != nil {
+					Error(w, r, http.StatusInternalServerError, true, err, "Could not store generate the authentication cookie")
+					return
+				}
+				w.Header().Add(HTMX_REDIRECT, "/")
+			}
+			if err := c.Close(); err != nil {
+				Error(w, r, http.StatusInternalServerError, true, err, "LDAP Close Error")
+				return
+			}
+		}
 	}
 
-	if _, err = w.Write(partial); err != nil {
-		logger.With("err", err).Error("Could not render login partial")
+	if err := RenderBlockPage[LoginFormData](w, r, "login.form", returnData); err != nil {
+		logger.With("err", err).Error("Could not render page")
 	}
 }

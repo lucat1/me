@@ -2,12 +2,18 @@
 <form hx-post="/login/do" hx-ext="json-enc">
   <div class="flex flex-col my-4">
     <label for="username" class="my-2 text-md font-medium">Username</label>
-    <input name="username" id="username" value="{{ .Password }}" class="text-lg" />
+    <input name="username" id="username" value="{{ .Username }}" class="text-lg" />
+    {{ if not (eq .UsernameError "") }}
+    <label for="username" class="text-md text-red-500">{{ .UsernameError }}</label>
+    {{ end }}
   </div>
 
   <div class="flex flex-col max-w my-4">
     <label for="password" class="my-2 text-md font-medium">Password</label>
     <input name="password" id="password" type="password" value="{{ .Password }}" class="text-lg" />
+    {{ if not (eq .PasswordError "") }}
+    <label for="password" class="text-md text-red-500">{{ .PasswordError }}</label>
+    {{ end }}
   </div>
 
   {{ if not (eq .Error "") }}

@@ -43,9 +43,11 @@ type Modules struct {
 	Enabled []string `json:"enabled"`
 }
 
-type Auth struct {
+type AuthConfig struct {
 	Secret   string `json:"secret"`
 	Duration uint64 `json:"duration"`
+	BaseDN   string `json:"baseDn"`
+	Filter   string `json:"filter"`
 }
 
 type BuiltinConfig struct {
@@ -57,11 +59,11 @@ type Config struct {
 	WebConfig          WebConfig     `json:"web"`
 	LdapConfig         LdapConfig    `json:"ldap"`
 	Builtin            BuiltinConfig `json:"builtin"`
-	AllowPasswordReset bool          `json:"allow_password_reset"`
+	AllowPasswordReset bool          `json:"allowPasswordReset"`
 	Email              Email         `json:"email"`
 	Modules            Modules       `json:"modules"`
-	Auth               Auth          `json:"auth"`
-	LogLevel           string        `json:"log_level"`
+	Auth               AuthConfig    `json:"auth"`
+	LogLevel           string        `json:"logLevel"`
 }
 
 var config Config
