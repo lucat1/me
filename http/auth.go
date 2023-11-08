@@ -12,7 +12,7 @@ import (
 
 const (
 	AUTH_CONTEXT_KEY = "auth"
-	AUTH_COOKIE_NAME = "token"
+	AUTH_COOKIE_NAME = "meAuthToken"
 )
 
 type User struct {
@@ -27,11 +27,11 @@ type Claims struct {
 func Authenticate(w http.ResponseWriter, user User) (err error) {
 	authConfig := config.Get().Auth
 	claims := Claims{User: user}
-	expiry := time.Now().Add(time.Duration(authConfig.Duration) * time.Hour)
+	expiry := time.Now().Add(time.Duration(authConfig.Duration) * time.Minute)
 	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(expiry)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(authConfig.Secret)
+	tokenString, err := token.SignedString([]byte(authConfig.Secret))
 	if err != nil {
 		err = fmt.Errorf("Could not sign JWT: %v", err)
 		return
