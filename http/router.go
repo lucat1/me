@@ -1,6 +1,8 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/kataras/muxie"
 )
 
@@ -13,7 +15,7 @@ const (
 func Router() *muxie.Mux {
 	router := muxie.NewMux()
 	router.Use(IdMiddleware, LogMiddleware, AuthMiddleware, ErrorMiddleware)
-	router.HandleFunc(INDEX_ROUTE, Index)
+	router.Handle(INDEX_ROUTE, AuthMust(http.HandlerFunc(Index)))
 	router.HandleFunc(LOGIN_ROUTE, Login)
 	router.HandleFunc(LOGIN_DO_ROUTE, LoginDo)
 	return router

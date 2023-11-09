@@ -41,6 +41,7 @@ func Authenticate(w http.ResponseWriter, user User) (err error) {
 		Name:    AUTH_COOKIE_NAME,
 		Value:   tokenString,
 		Expires: expiry,
+		Path:    "/",
 	})
 	return
 }
@@ -59,7 +60,7 @@ func AuthMiddleware(h http.Handler) http.Handler {
 
 		claims := Claims{}
 		tkn, err := jwt.ParseWithClaims(cookie.Value, &claims, func(token *jwt.Token) (any, error) {
-			return config.Get().Auth.Secret, nil
+			return []byte(config.Get().Auth.Secret), nil
 		})
 		if err != nil || !tkn.Valid {
 			logger.With("err", err, "valid", tkn.Valid).Debug("Invalid token")
@@ -77,8 +78,7 @@ func AuthMust(h http.Handler) http.Handler {
 		user, ok := r.Context().Value(AUTH_CONTEXT_KEY).(*User)
 
 		if !ok {
-			// TODO: render page
-			w.WriteHeader(http.StatusUnauthorized)
+			http.Redirect(w, r, LOGIN_ROUTE, http.StatusTemporaryRedirect)
 			return
 		}
 
@@ -91,7 +91,8 @@ func AuthMust(h http.Handler) http.Handler {
 // AuthMust middleware, but the nil checking on the returned variable can be avoided.
 // Otherwise, the user should be always checked for existance (nil if unlogged)
 func GetUser(r *http.Request, must bool) (user *User) {
-	user, ok := r.Context().Value(AUTH_CONTEXT_KEY).(*User)
+	var ok bool
+	user, ok = r.Context().Value(AUTH_CONTEXT_KEY).(*User)
 	if !ok {
 		user = nil
 		if must {
@@ -100,5 +101,5 @@ func GetUser(r *http.Request, must bool) (user *User) {
 		return
 	}
 
-	return user
+	return
 }

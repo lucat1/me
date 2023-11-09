@@ -28,7 +28,7 @@ func main() {
 	case "error":
 		logLevel = slog.LevelError
 	default:
-		logLevel = slog.LevelWarn
+		logLevel = slog.LevelInfo
 	}
 	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: logLevel})
 	slog.SetDefault(slog.New(handler))
