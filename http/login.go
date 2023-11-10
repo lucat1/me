@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-ldap/ldap/v3"
 	"github.com/lucat1/me/client"
@@ -24,7 +25,12 @@ type LoginFormData struct {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	logger := GetLogger(r)
+	user := GetUser(r, false)
 	logger.Info("Rendering login index")
+	if user != nil {
+		http.Redirect(w, r, INDEX_ROUTE, http.StatusTemporaryRedirect)
+		return
+	}
 
 	if err := RenderPage[LoginFormData](w, r, "login", "Login", LoginFormData{}); err != nil {
 		logger.With("err", err).Error("Could not render page")
@@ -125,4 +131,15 @@ func LoginDo(w http.ResponseWriter, r *http.Request) {
 	if err := RenderBlockPage[LoginFormData](w, r, "login.form", returnData); err != nil {
 		logger.With("err", err).Error("Could not render page")
 	}
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     AUTH_COOKIE_NAME,
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+	})
+	http.Redirect(w, r, INDEX_ROUTE, http.StatusTemporaryRedirect)
+	return
 }

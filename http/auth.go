@@ -42,6 +42,7 @@ func Authenticate(w http.ResponseWriter, user User) (err error) {
 		Value:    tokenString,
 		Expires:  expiry,
 		HttpOnly: true,
+		Path:     "/",
 	})
 	return
 }

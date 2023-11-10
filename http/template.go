@@ -22,7 +22,11 @@ type PageData struct {
 	Timestamp time.Time
 }
 
-const ROOT_TEMPLATE = "root"
+const (
+	ROOT_TEMPLATE     = "root"
+	CONTENT_TYPE      = "Content-Type"
+	CONTENT_TYPE_HTML = "text/html"
+)
 
 func RenderPage[T any](w http.ResponseWriter, r *http.Request, name, title string, data T) (err error) {
 	body, err := RenderBlock[T](name, data)
@@ -40,6 +44,7 @@ func RenderPage[T any](w http.ResponseWriter, r *http.Request, name, title strin
 		RequestID: GetRequestId(r),
 		Timestamp: time.Now(),
 	}
+	w.Header().Add(CONTENT_TYPE, CONTENT_TYPE_HTML)
 	err = templates.ExecuteTemplate(w, ROOT_TEMPLATE, pageData)
 	if err != nil {
 		err = fmt.Errorf("Error while rendering page root: %v", err)
@@ -48,6 +53,7 @@ func RenderPage[T any](w http.ResponseWriter, r *http.Request, name, title strin
 }
 
 func RenderBlockPage[T any](w http.ResponseWriter, r *http.Request, name string, data T) (err error) {
+	w.Header().Add(CONTENT_TYPE, CONTENT_TYPE_HTML)
 	err = templates.Get().ExecuteTemplate(w, name, data)
 	if err != nil {
 		err = fmt.Errorf("Error while rendering block page %s: %v", name, err)
