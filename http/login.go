@@ -139,6 +139,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Value:    "",
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
+		Path:     "/",
 	})
 	http.Redirect(w, r, INDEX_ROUTE, http.StatusTemporaryRedirect)
 	return

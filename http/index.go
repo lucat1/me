@@ -11,5 +11,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("secret"))
+	if err := RenderPage[interface{}](w, r, "index", "Index", nil); err != nil {
+		logger.With("err", err).Error("Could not render page")
+	}
 }
