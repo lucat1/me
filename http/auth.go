@@ -38,10 +38,10 @@ func Authenticate(w http.ResponseWriter, user User) (err error) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    AUTH_COOKIE_NAME,
-		Value:   tokenString,
-		Expires: expiry,
-		Path:    "/",
+		Name:     AUTH_COOKIE_NAME,
+		Value:    tokenString,
+		Expires:  expiry,
+		HttpOnly: true,
 	})
 	return
 }
@@ -65,7 +65,7 @@ func AuthMiddleware(h http.Handler) http.Handler {
 		if err != nil || !tkn.Valid {
 			logger.With("err", err, "valid", tkn.Valid).Debug("Invalid token")
 		} else {
-			ctx := context.WithValue(r.Context(), AUTH_CONTEXT_KEY, claims.User)
+			ctx := context.WithValue(r.Context(), AUTH_CONTEXT_KEY, &claims.User)
 			r = r.WithContext(ctx)
 		}
 		h.ServeHTTP(w, r)
