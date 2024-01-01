@@ -12,15 +12,15 @@ func TestParseConfigWrongPath(t *testing.T) {
 }
 
 func TestParseConfigWeb(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.WebConfig.Ip, "0.0.0.0")
-	assert.Equal(t, Config.WebConfig.Port, "8080")
+	assert.Equal(t, Config.WebConfig.Port, uint16(8080))
 }
 
 func TestParseConfigLdap(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.LdapConfig.Address, "ldaps://ldap.example.com:636")
@@ -32,21 +32,21 @@ func TestParseConfigLdap(t *testing.T) {
 }
 
 func TestParseConfigLogin(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
-	assert.Equal(t, Config.LoginScript, "path/to/check/script")
+	assert.Equal(t, Config.Builtin.LoginScript, "login")
 }
 
 func TestParseConfigAllowPasswordReset(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.AllowPasswordReset, true)
 }
 
 func TestParseConfigEmailServer(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.Email.Server.Address, "host:port")
@@ -57,7 +57,7 @@ func TestParseConfigEmailServer(t *testing.T) {
 }
 
 func TestParseConfigEmailSender(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.Email.Sender.Address, "root@teapot.ovh")
@@ -65,7 +65,7 @@ func TestParseConfigEmailSender(t *testing.T) {
 }
 
 func TestParseConfigModules(t *testing.T) {
-	err := ParseConfig("./config.yaml")
+	err := ParseConfig("../config.example.yaml")
 	assert.NilError(t, err)
 	Config := Get()
 	assert.Equal(t, Config.Modules.Root, "path/to/modules")
