@@ -51,18 +51,6 @@ func LoadModule(modulePath string) (module Module, err error) {
 		return
 	}
 
-	for handler, relPath := range schema.Handlers {
-		scriptPath := path.Join(modulePath, relPath)
-		slog.With("handler", handler, "path", scriptPath).Debug("Loading script handler")
-		endpoint := Endpoint{handler, nil}
-		endpoint.Script, err = loadScript(scriptPath)
-		if err != nil {
-			return
-		}
-		module.Endpoints = append(module.Endpoints, endpoint)
-		module.ScriptPaths = append(module.ScriptPaths, scriptPath)
-	}
-
 	for _, relPath := range schema.Templates {
 		templatePath := path.Join(modulePath, relPath)
 		slog.With("path", templatePath).Debug("Loading template")
@@ -72,6 +60,18 @@ func LoadModule(modulePath string) (module Module, err error) {
 	if err != nil {
 		err = fmt.Errorf("Could not parse templates: %v", err)
 		return
+	}
+
+	for handler, relPath := range schema.Handlers {
+		scriptPath := path.Join(modulePath, relPath)
+		slog.With("handler", handler, "path", scriptPath).Debug("Loading script handler")
+		endpoint := Endpoint{handler, nil}
+		endpoint.Script, err = loadScript(&module, scriptPath)
+		if err != nil {
+			return
+		}
+		module.Endpoints = append(module.Endpoints, endpoint)
+		module.ScriptPaths = append(module.ScriptPaths, scriptPath)
 	}
 
 	module.Name = schema.Name

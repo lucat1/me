@@ -1,3 +1,2 @@
-ldap := import("ldap")
-
-ldap.search("dc=example,dc=com", "(objectClass=posixUser)")
+response.status = 200
+response.body = render("simple_index")

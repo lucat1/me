@@ -7,7 +7,7 @@ import (
 	"github.com/d5/tengo/v2"
 )
 
-func loadScript(scriptPath string) (compiled *tengo.Compiled, err error) {
+func loadScript(module *Module, scriptPath string) (compiled *tengo.Compiled, err error) {
 	contents, err := os.ReadFile(scriptPath)
 	if err != nil {
 		err = fmt.Errorf("Could not load script file %s: %v", scriptPath, err)
@@ -16,6 +16,8 @@ func loadScript(scriptPath string) (compiled *tengo.Compiled, err error) {
 
 	script := tengo.NewScript(contents)
 	script.SetImports(ModuleMap)
+	script.Add("response", NewResponse())
+	script.Add("render", NewRender(module))
 	compiled, err = script.Compile()
 	if err != nil {
 		err = fmt.Errorf("Could not compile script file %s: %v", scriptPath, err)
